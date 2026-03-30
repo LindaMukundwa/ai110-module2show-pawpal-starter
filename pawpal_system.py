@@ -275,9 +275,11 @@ class Scheduler:
         # Only schedule tasks that haven't already been completed
         pending = [t for t in self.tasks if not t.completed]
         feasible = self._filter_feasible(pending)
+        infeasible = [t for t in pending if t not in feasible]
         sorted_tasks = self._sort_by_priority(feasible)
 
         plan = DailyPlan(pet_name=self.pet.name)
+        plan.skipped_tasks.extend(infeasible)
         plan.conflicts = self._detect_crowded_windows(feasible)
 
         current_time = self.owner.preferred_start_hour * 60  # minutes from midnight
