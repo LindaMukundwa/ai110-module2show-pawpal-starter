@@ -7,7 +7,7 @@
 Identifying initial objects, attributes and methods:
 
 1. Pet Task (single care item)
-class PetTask:
+```class PetTask:
     # Attributes
     task_id: str          # unique identifier
     title: str            # e.g. "Morning walk"
@@ -20,9 +20,9 @@ class PetTask:
     # Methods
     def is_high_priority(self) -> bool
     def scheduling_score(self) -> int   # numeric weight used by scheduler
-
+```
 2. Pet (animal being cared for)
-class Pet:
+```class Pet:
     # Attributes
     name: str
     species: str          # dog | cat | other
@@ -33,9 +33,9 @@ class Pet:
     # Methods
     def get_default_tasks(self) -> list[PetTask]  # species-based required tasks
     def summary(self) -> str
-
+```
 3. Owner (person with constraints and preferences)
-class Owner:
+```class Owner:
     # Attributes
     name: str
     available_minutes: int       # total time budget for the day
@@ -47,9 +47,9 @@ class Owner:
     # Methods
     def get_time_budget(self) -> int
     def get_constraints(self) -> dict
-
+```
 4. Scheduler - (core logic for planning engine)
-class Scheduler:
+```class Scheduler:
     # Attributes
     pet: Pet
     owner: Owner
@@ -61,9 +61,9 @@ class Scheduler:
     def generate_plan(self) -> DailyPlan   # main action — applies constraints + sorts
     def _filter_feasible(self) -> list[PetTask]   # drops tasks that exceed time budget
     def _sort_by_priority(self, tasks) -> list[PetTask]
-
+```
 5. DailyPlan (output with reasoning)
-class DailyPlan:
+```class DailyPlan:
     # Attributes
     scheduled_tasks: list[ScheduledTask]   # tasks that fit
     skipped_tasks: list[PetTask]           # tasks that were dropped and why
@@ -74,9 +74,9 @@ class DailyPlan:
     def explain(self) -> str        # full narrative of why each task was chosen
     def summary(self) -> str        # short version for display
     def to_table(self) -> list[dict]  # formatted for st.table()
-
+```
 6. ScheduledTask (task with assigned time slot)
-class ScheduledTask:
+```class ScheduledTask:
     # Attributes
     task: PetTask
     start_time: int    # minutes from midnight, e.g. 420 = 7:00am
@@ -85,7 +85,7 @@ class ScheduledTask:
 
     # Methods
     def time_label(self) -> str   # "7:00 AM – 7:20 AM"
-
+```
 Main relationships:
 Owner ──────┐
             ├──► Scheduler ──► DailyPlan ──► [ScheduledTask]
@@ -112,7 +112,7 @@ Pet provides default PetTask objects based on species
 - Did your design change during implementation?
 - If yes, describe at least one change and why you made it.
 
-There were soome potential logic bottlenecks such as the fact that there was no pet reference in Schedule and _filer_feasible() in pawpal_system.py had an inconsistent signature. Without changing these, generate_plan() would not work. The changes were made to add those relationships to the UML diagram and pass Pet as an argument. DailyPlan also took pet_name so it knew which pet had each specific plan.
+There were some potential logic bottlenecks such as the fact that there was no pet reference in Schedule and _filer_feasible() in pawpal_system.py had an inconsistent signature. Without changing these, generate_plan() would not work. The changes were made to add those relationships to the UML diagram and pass Pet as an argument. DailyPlan also took pet_name so it knew which pet had each specific plan.
 ---
 
 ## 2. Scheduling Logic and Tradeoffs
@@ -158,6 +158,8 @@ I tried to be very meticulous with each aspect of the brainstorming, especially 
 - How did you evaluate or verify what the AI suggested?
 
 Thorough testing using multiple edge cases as well as analyzing the codebase for potential faults in the logic. If these test cases passed, I would add more then proceed once those also passed.
+
+
 ---
 
 ## 4. Testing and Verification
@@ -177,6 +179,8 @@ I am at a 4/5 because I could always test it more so it will never be a full 5/5
 
 - What edge cases would you test next if you had more time?
 I would like to test and add features for different types of pets since I mostly stuck with dogs, but people can have all sorts of pets. This would be an interesting test because it adds new levels of complexity.
+
+
 ---
 
 ## 5. Reflection

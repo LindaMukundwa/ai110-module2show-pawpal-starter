@@ -3,7 +3,7 @@
 This is **PawPal+**, a Streamlit app that helps a pet owner plan care tasks for their pet!
 ## Demo
 
-<a><img src="MainStreamlit1.png" alt="Demo image" width="400"/></a>
+<a><img src="MainStreamlit1.png" alt="Demo image" width="800"/></a>
 
 ## Scenario
 
