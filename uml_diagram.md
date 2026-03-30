@@ -37,8 +37,8 @@ classDiagram
     }
 
     class Scheduler {
-        +Pet pet
         +Owner owner
+        +Pet pet
         +list~PetTask~ tasks
         +add_task(task: PetTask) None
         +remove_task(task_id: str) None
@@ -48,6 +48,7 @@ classDiagram
     }
 
     class DailyPlan {
+        +str pet_name
         +list~ScheduledTask~ scheduled_tasks
         +list~PetTask~ skipped_tasks
         +int total_duration
@@ -67,6 +68,7 @@ classDiagram
 
     Owner "1" --> "many" Pet : owns
     Scheduler --> Owner : uses
+    Scheduler --> Pet : schedules for
     Scheduler "1" --> "many" PetTask : manages
     Scheduler --> DailyPlan : generates
     DailyPlan "1" --> "many" ScheduledTask : contains
