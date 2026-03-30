@@ -112,6 +112,7 @@ if st.session_state.owner is not None and st.session_state.owner.pets:
         duration    = st.number_input("Duration (minutes)", min_value=1, max_value=240, value=20)
         priority    = st.selectbox("Priority", ["low", "medium", "high"], index=2)
         pref_time   = st.selectbox("Preferred time", ["morning", "afternoon", "evening", "any"])
+        recurrence  = st.selectbox("Recurrence", ["none", "daily", "weekly"])
         notes       = st.text_input("Notes (optional)", value="")
         add_task    = st.form_submit_button("Add task")
 
@@ -125,24 +126,66 @@ if st.session_state.owner is not None and st.session_state.owner.pets:
             priority=priority,
             preferred_time=pref_time,
             notes=notes,
+            recurrence=recurrence,
         )
-        # pet.add_task() appends to pet.tasks — the pet object lives inside
-        # owner.pets which is already in session_state, so this persists.
         selected_pet.add_task(new_task)
         st.rerun()
 
     if selected_pet.tasks:
-        st.write(f"**Tasks for {selected_pet.name}:**")
-        st.table([
-            {
-                "Title": t.title,
-                "Category": t.category,
-                "Duration (min)": t.duration_minutes,
-                "Priority": t.priority,
-                "Preferred time": t.preferred_time,
-            }
-            for t in selected_pet.tasks
-        ])
+        # --- Filter controls ---
+        col1, col2 = st.columns(2)
+        with col1:
+            status_filter = st.radio(
+                "Show", ["all", "pending", "completed"], horizontal=True, key="status_filter"
+            )
+        with col2:
+            categories = ["all"] + sorted({t.category for t in selected_pet.tasks})
+            cat_filter = st.selectbox("Category", categories, key="cat_filter")
+
+        if status_filter == "pending":
+            visible_tasks = selected_pet.get_pending_tasks()
+        elif status_filter == "completed":
+            visible_tasks = selected_pet.get_completed_tasks()
+        else:
+            visible_tasks = selected_pet.tasks
+
+        if cat_filter != "all":
+            visible_tasks = [t for t in visible_tasks if t.category == cat_filter]
+
+        st.write(f"**Tasks for {selected_pet.name}:** ({len(visible_tasks)} shown)")
+        if visible_tasks:
+            st.table([
+                {
+                    "Title": t.title,
+                    "Category": t.category,
+                    "Duration (min)": t.duration_minutes,
+                    "Priority": t.priority,
+                    "Preferred time": t.preferred_time,
+                    "Recurring": t.recurrence,
+                    "Done": "✓" if t.completed else "",
+                }
+                for t in visible_tasks
+            ])
+        else:
+            st.info("No tasks match the selected filters.")
+
+        # --- Mark complete ---
+        pending_tasks = selected_pet.get_pending_tasks()
+        if pending_tasks:
+            st.write("**Mark a task complete:**")
+            complete_col1, complete_col2 = st.columns([3, 1])
+            with complete_col1:
+                task_to_complete = st.selectbox(
+                    "Task", ["— select —"] + [t.title for t in pending_tasks],
+                    key="mark_complete_select", label_visibility="collapsed"
+                )
+            with complete_col2:
+                if st.button("Mark done") and task_to_complete != "— select —":
+                    for t in selected_pet.tasks:
+                        if t.title == task_to_complete and not t.completed:
+                            t.mark_complete()
+                            break
+                    st.rerun()
     else:
         st.info(f"No tasks for {selected_pet.name} yet.")
 
@@ -163,15 +206,19 @@ if st.session_state.owner is not None and any(p.tasks for p in st.session_state.
     schedule_pet    = next(p for p in pets_with_tasks if p.name == schedule_name)
 
     if st.button("Generate schedule"):
-        # Scheduler is a plain Python object — no need to store it in session_state.
-        # It reads from owner and pet (already persisted) and returns a DailyPlan.
         scheduler = Scheduler(owner=owner, pet=schedule_pet, tasks=schedule_pet.tasks)
         plan = scheduler.generate_plan()
 
         st.success(plan.summary())
 
+        if plan.conflicts:
+            st.warning("Scheduling notes:\n" + "\n".join(f"• {c}" for c in plan.conflicts))
+
         st.subheader("Schedule")
-        st.table(plan.to_table())
+        if plan.scheduled_tasks:
+            st.table(plan.to_table())
+        else:
+            st.info("No tasks could be scheduled. Check time budget or task durations.")
 
         st.subheader("Reasoning")
         st.text(plan.explain())
