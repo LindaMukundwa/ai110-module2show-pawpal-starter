@@ -120,12 +120,20 @@ There were soome potential logic bottlenecks such as the fact that there was no 
 **a. Constraints and priorities**
 
 - What constraints does your scheduler consider (for example: time, priority, preferences)?
+
+Three main ones: the owner's total time budget (available_minutes), a hard end-of-day wall (preferred_end_hour), and task priority. A smaller constraint is preferred_time which influences sort order but doesn't block scheduling.
+
 - How did you decide which constraints mattered most?
+
+Time budget and end hour are the most important constraints because a pet's care only happens if the owner actually has time. Priority was second because not all tasks carry the same urgency. For example, a medication task genuinely can't be skipped the way a grooming session can. Preferred time was kept soft intentionally: real life rarely allows perfect timing, so the scheduler warns rather than refuses.
 
 **b. Tradeoffs**
 
 - Describe one tradeoff your scheduler makes.
+Tasks are scheduled sequentially in one pass, highest priority first. This means a long high-priority task can consume time that would have fit two shorter lower-priority tasks back-to-back.
+
 - Why is that tradeoff reasonable for this scenario?
+For a daily pet care routine, getting the most important things done like medication, feeding, a walk matters more than maximizing the number of tasks completed. A greedy priority-first pass is also easy to reason about and debug, which matters when the output is something a real owner will actually trust and follow.
 
 ---
 
@@ -134,13 +142,22 @@ There were soome potential logic bottlenecks such as the fact that there was no 
 **a. How you used AI**
 
 - How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
+
+I used AI during the times that were shown during each part in the different phases. It was most helpful for brainstorming and debugging. 
+
 - What kinds of prompts or questions were most helpful?
+
+The questions on the class forum were very helpful such as "Why is this test failing, and is the bug in my test code or my pawpal_system.py logic?" Another good idea was asking it to ask me clarifgfying questions to avoid hallucinations.
 
 **b. Judgment and verification**
 
 - Describe one moment where you did not accept an AI suggestion as-is.
+
+I tried to be very meticulous with each aspect of the brainstorming, especially the UML diagram since it was informing the architecture. By questioning it and finding bottlenecks, it allowed development to have signigicantly less hiccups and the extra challenge even easier since I had accounted for it. 
+
 - How did you evaluate or verify what the AI suggested?
 
+Thorough testing using multiple edge cases as well as analyzing the codebase for potential faults in the logic. If these test cases passed, I would add more then proceed once those also passed.
 ---
 
 ## 4. Testing and Verification
@@ -148,13 +165,18 @@ There were soome potential logic bottlenecks such as the fact that there was no 
 **a. What you tested**
 
 - What behaviors did you test?
+The main ones were sorting, recurrence logic, conflict detection, budget feasibility, and the actual utility of flter_tasks. I was able to get more tests that strained these areas for a better understanding of how the system was working. 
+
 - Why were these tests important?
+They ensured that the system was working as I had intended. They made sure that I wasn't being careless with the design and also considering edge case, which can come up. Additionally, they made sure that I would be comfortable adding further enhancements without breaking the existing infrastructure.
 
 **b. Confidence**
 
 - How confident are you that your scheduler works correctly?
-- What edge cases would you test next if you had more time?
+I am at a 4/5 because I could always test it more so it will never be a full 5/5. However, given what I have tested, they have all passed so I am comfortable with those tests.
 
+- What edge cases would you test next if you had more time?
+I would like to test and add features for different types of pets since I mostly stuck with dogs, but people can have all sorts of pets. This would be an interesting test because it adds new levels of complexity.
 ---
 
 ## 5. Reflection
@@ -163,10 +185,16 @@ There were soome potential logic bottlenecks such as the fact that there was no 
 
 - What part of this project are you most satisfied with?
 
+Thoroughy planning made me feel confident to start developing and guide the right decisions so there were fewer roadblocks. This ended up not being a hassle and allowed me more time to test and iterate. 
+
 **b. What you would improve**
 
 - If you had another iteration, what would you improve or redesign?
 
+I would have liked to spend more time on the user experience as well as the logic because it's what the owner interacts with most. It works however making it smoother or  simpler could elevate the general project.
+
 **c. Key takeaway**
 
 - What is one important thing you learned about designing systems or working with AI on this project?
+
+I learned that having an exact vision of what you want and a good understanding of the system far outweighs trusting the AI''s judgement. It makes you a better architect and you cans understanding your project all the more better so you can speak to several parts of it.
