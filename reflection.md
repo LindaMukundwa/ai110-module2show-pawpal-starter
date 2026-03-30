@@ -113,6 +113,7 @@ Pet provides default PetTask objects based on species
 - If yes, describe at least one change and why you made it.
 
 There were some potential logic bottlenecks such as the fact that there was no pet reference in Schedule and _filer_feasible() in pawpal_system.py had an inconsistent signature. Without changing these, generate_plan() would not work. The changes were made to add those relationships to the UML diagram and pass Pet as an argument. DailyPlan also took pet_name so it knew which pet had each specific plan.
+
 ---
 
 ## 2. Scheduling Logic and Tradeoffs
