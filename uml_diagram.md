@@ -26,6 +26,7 @@ classDiagram
 
     class Owner {
         +str name
+        +list~Pet~ pets
         +int available_minutes
         +int preferred_start_hour
         +int preferred_end_hour
@@ -64,7 +65,7 @@ classDiagram
         +time_label() str
     }
 
-    Scheduler --> Pet : uses
+    Owner "1" --> "many" Pet : owns
     Scheduler --> Owner : uses
     Scheduler "1" --> "many" PetTask : manages
     Scheduler --> DailyPlan : generates
